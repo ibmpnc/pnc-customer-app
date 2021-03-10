@@ -1,15 +1,17 @@
-package com.test.kafka;
+package com.pnc.customer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.retry.annotation.EnableRetry;
 
-@SpringBootApplication(scanBasePackages = "com.test.kafka")
+
+@SpringBootApplication(scanBasePackages = {"com.pnc.customer", "com.test.kafka"})
 @EnableRetry
-public class KafkaConsumerApplication {
+public class CustomerEventApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(KafkaConsumerApplication.class, args);
+		SpringApplication.run(CustomerEventApplication.class, args);
 	}
 
 }
+

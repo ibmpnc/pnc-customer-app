@@ -1,4 +1,4 @@
-package com.test.kafka.controller;
+package com.pnc.customer.edge;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-public class AccountDataController {
-	private static final Logger logger = LoggerFactory.getLogger(AccountDataController.class);
+public class EdgeAppController {
+	private static final Logger logger = LoggerFactory.getLogger(EdgeAppController.class);
 	
 	@RequestMapping(method = RequestMethod.POST, value="/data")
 	public String saveAccountData(@RequestBody String request) throws Exception{

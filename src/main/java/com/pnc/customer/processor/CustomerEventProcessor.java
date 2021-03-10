@@ -1,4 +1,4 @@
-package com.test.kafka.consumer;
+package com.pnc.customer.processor;
 
 import java.util.Properties;
 
@@ -17,11 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
-import com.test.kafka.service.CustomerService;
+import com.pnc.customer.service.CustomerService;
 
 @Service
-public class KafkaConsumer {
-	private static final Logger logger = LoggerFactory.getLogger(KafkaConsumer.class);
+public class CustomerEventProcessor {
+
+	private static final Logger logger = LoggerFactory.getLogger(CustomerEventProcessor.class);
 
 
 	/*
@@ -32,7 +33,7 @@ public class KafkaConsumer {
 	@Autowired
 	private CustomerService customerService;
 	
-	@Bean("kafkaConsumerProcessor")
+	@Bean("customerKafkaProcessor")
 	public Topology startKafkaStreams() {
 		
 	    final Serde<String> stringSerde = Serdes.String();
@@ -40,7 +41,7 @@ public class KafkaConsumer {
 	    final StreamsBuilder builder = new StreamsBuilder();
 
 	    // Read the input Kafka topic into a KStream instance.
-	    final KStream<String, String> textLines = builder.stream("ACCOUNT", Consumed.with(stringSerde, stringSerde));
+	    final KStream<String, String> textLines = builder.stream("CUSTOMER", Consumed.with(stringSerde, stringSerde));
 	    
 	    textLines
 	    	.map((key, value) -> KeyValue.pair(value, value.toUpperCase()))
@@ -78,7 +79,4 @@ public class KafkaConsumer {
 	    streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
 	    return streamsConfiguration;
 	}
-	
-	
-	
 }
