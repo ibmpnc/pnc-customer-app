@@ -47,7 +47,7 @@ public class CustomerEventProcessor {
 	    	.map((key, value) -> KeyValue.pair(value, value.toUpperCase()))
 	    	.filter((key, value) -> customerService.sendAccountDetails(value))
 	    	.peek((key, value) -> logger.info("key::" + key + ", value::" + value))
-	    	.to("PUBLISH");
+	    	.to("RETRY_CUSTOMER");
 	    
 	    // spring reactive to separate REST POST call
 	    // Mockito test
