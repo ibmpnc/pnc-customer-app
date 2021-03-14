@@ -11,6 +11,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.demo.model.KafkaBankAccount;
 import com.pnc.customer.cahce.RedisCacheRepository;
 
 @Component
@@ -21,14 +22,14 @@ public class CustomerService {
 	private RedisCacheRepository redisCacheRepository;
 	
 	@Retryable(value = { Exception.class }, maxAttempts = 3, backoff = @Backoff(delay = 2000))
-	public boolean sendAccountDetails(String value)
+	public boolean sendAccountDetails(KafkaBankAccount kafkaBankAccount)
 	{
 	    final String uri = "http://localhost:9095/data";
 	    RestTemplate restTemplate = new RestTemplate();
 	 
 	    try {
 	    	logger.info("Before EDGE API call ");
-	    	String result = restTemplate.postForObject(uri, value, String.class);
+	    	String result = restTemplate.postForObject(uri, kafkaBankAccount.getName(), String.class);
 		    logger.info("EDGE API call response :: " + result);
 	    } catch(Exception ex) {
 	    	logger.error("Exception from EDGE API call");

@@ -6,7 +6,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.retry.annotation.EnableRetry;
 
 
-@SpringBootApplication(scanBasePackages = {"com.pnc.customer"})
+@SpringBootApplication(scanBasePackages = {"com.pnc.customer", "com.example.demo"})
 @EnableRetry
 @EnableCaching
 public class CustomerEventApplication {

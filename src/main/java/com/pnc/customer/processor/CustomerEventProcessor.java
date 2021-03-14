@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.model.KafkaBankAccount;
+import com.example.demo.serde.JsonSerializer;
 import com.pnc.customer.service.CustomerService;
 
 @Service
@@ -35,22 +37,18 @@ public class CustomerEventProcessor {
 	
 	@Bean("customerKafkaProcessor")
 	public Topology startKafkaStreams() {
-		
-	    final Serde<String> stringSerde = Serdes.String();
  
 	    final StreamsBuilder builder = new StreamsBuilder();
 
 	    // Read the input Kafka topic into a KStream instance.
-	    final KStream<String, String> textLines = builder.stream("CUSTOMER", Consumed.with(stringSerde, stringSerde));
+	    final KStream<String, KafkaBankAccount> textLines = builder.stream("customersecond");//, Consumed.with(stringSerde, valueSerde));
 	    
 	    textLines
-	    	.map((key, value) -> KeyValue.pair(value, value.toUpperCase()))
-	    	.filter((key, value) -> customerService.sendAccountDetails(value))
-	    	.peek((key, value) -> logger.info("key::" + key + ", value::" + value))
-	    	.to("RETRY_CUSTOMER");
-	    
-	    // spring reactive to separate REST POST call
-	    // Mockito test
+	    	//.map((key, kafkaBankAccount) -> kafkaBankAccount.setName(kafkaBankAccount.getName().toUpperCase()))
+	    	.filter((key, kafkaBankAccount) -> customerService.sendAccountDetails(kafkaBankAccount))
+	    	.peek((key, kafkaBankAccount) -> logger.info("The message processing has failed, so storing the failed message in retry topic. +"
+	    			+ "key::" + key + ", kafkaBankAccountMsg::" + kafkaBankAccount.toString()))
+	    	.to("retry_customersecond");
 	    
 	    Topology topology = builder.build();
 	    final KafkaStreams streams = new KafkaStreams(topology, getStreamConfiguration());
@@ -76,7 +74,7 @@ public class CustomerEventProcessor {
 	    streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 	    // Specify default (de)serializers for record keys and for record values.
 	    streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
-	    streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+	    streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, KafkaBankAccount.class.getName());
 	    return streamsConfiguration;
 	}
 }
