@@ -10,14 +10,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration
 public class RedisCacheConfig {
 
-    @Bean
+    //@Bean
     JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration("localhost", 6379);
         redisStandaloneConfiguration.setPassword(RedisPassword.of("password"));
         return new JedisConnectionFactory(redisStandaloneConfiguration);
     }
 
-    @Bean
+    //@Bean
     public RedisTemplate redisTemplate() {
         RedisTemplate template = new RedisTemplate<>();
         template.setConnectionFactory(jedisConnectionFactory());
